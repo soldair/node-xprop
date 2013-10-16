@@ -15,17 +15,18 @@ module.exports = function(options,cb){
     if(options.id) args.push('-id',options.id)
     else if(options.root) args.push('-root')
 
-    if(options.prop) args.push(prop)
+    if(options.prop) args.push(options.prop)
   }
-  cp.exec('xprop',args,function(err,data,stderr){
-    cb(err,data?parse(data.toString()):false,stderr)
-  });
 
-  return proc; 
+  cp.exec('xprop '+args.join(' '),function(err,data,stderr){
+    cb(err,data?parse(data.toString()):false,stderr)
+  }); 
 }
 
 module.exports.properties = function(cb){
-  module.exports({prop:'_NET_SUPPORTED',root:1},cb);
+  module.exports({prop:'_NET_SUPPORTED',root:1},function(err,data){
+    cb(err,data?data[0].value.split(','):false);
+  });
 }
 
 module.exports._parse = parse;
@@ -47,15 +48,15 @@ function parse(str){
       if(parts.length > 1){
         keyparts = parts[0].split('(');
         lines[i] = parts[1];
-        out.key = keyparts[0];
-        out.type = keyparts[1].substr(0,keyparts[1].length-1);
+        current.key = keyparts[0];
+        current.type = keyparts[1].substr(0,keyparts[1].length-1);
       }
     }
     if(!current) current = valueObj();
     if(current.value.length) current.value += "\n";
     current.value += lines[i].replace(/^        /,'');// remove multiline value padding at start of line
   }
-  if(current) out.push(current);
+  if(current && current.value.length) out.push(current);
   return out; 
 }
 
