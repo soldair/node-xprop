@@ -21,7 +21,6 @@ xprop.properties(function(err,data){
   //
 
 //todo
-nged on the desktop!
 stream = xprop.spy()
 stream.on('data',function(){
  console.log('something changed on the desktop')

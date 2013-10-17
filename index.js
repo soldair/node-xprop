@@ -29,6 +29,22 @@ module.exports.properties = function(cb){
   });
 }
 
+//TODO
+module.exports.spy = function(win){
+  if(win == 'root'){
+    args.push('-root');
+  } else if(typeof win !== 'function'){
+    args.push('-id',win);
+  }
+
+
+  //var s = through(function(data){
+  //  this.queue(parse(data.toString());
+  //});
+
+  return s;
+}
+
 module.exports._parse = parse;
 
 function parse(str){
